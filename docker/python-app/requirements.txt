@@ -1,0 +1,4 @@
+Flask== 3.0.1 #2.1.2 Framework web principal pour créer des applications web
+Flask-SQLAlchemy==3.0.2 #2.5.1 Extension pour intégrer SQLAlchemy avec Flask
+mysqlclient==2.1.0  # Pilote MySQL pour Python, nécessaire pour se connecter à une base de données MySQL
+python-dotenv==0.20.0  # Bibliothèque pour lire les variables d'environnement à partir d'un fichier .env.

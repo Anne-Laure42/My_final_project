@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to my Final Project Page</h1>
+        </header>
+
+        <section class="form-section">
+            <form method="post" action="{{ url_for('home') }}">
+                <div class="form-group">
+                    <label for="name">Enter your name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </section>
+
+        <section class="user-list-section">
+            <h2>Registered Users</h2>
+            <ul class="user-list">
+                {% for user in users %}
+                    <li>{{ user }}</li>
+                {% endfor %}
+            </ul>
+        </section>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Copyright -->
+        <footer>
+            <hr>
+            <div class="copyright">
+                &copy; 2024 Anne-Laure Viricel Final Projet. All rights reserved.
+            </div>
+            <div class="footer-links">
+                <a href="{{ url_for('contact') }}">Contact</a> | <a href="{{ url_for('help') }}">Help</a>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

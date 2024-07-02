@@ -30,21 +30,6 @@ resource "aws_cloudwatch_log_subscription_filter" "cl_log_filter" {
 }
 
 
-# # --- Kinesis Stream ---
-
-# resource "aws_kinesis_stream" "kinesis_stream" {
-#   name             = "${var.project}-kinesis-stream"
-#   retention_period = 24
-
-#   stream_mode_details {
-#     stream_mode = "ON_DEMAND"
-#   }
-
-#   tags = {
-#     Name = "${var.project}-kinesis"
-#   }
-# }
-
 # --- Firehose delivery stream ---
 
 resource "aws_kinesis_firehose_delivery_stream" "firehose_delivery_stream" {
@@ -74,5 +59,5 @@ resource "aws_kinesis_firehose_delivery_stream" "firehose_delivery_stream" {
   tags = {
     Name = "${var.project}-firehose"
   }
-     depends_on = [aws_iam_policy.firehose_policy]
-  }
+  depends_on = [aws_iam_policy.firehose_policy]
+}

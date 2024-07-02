@@ -1,4 +1,4 @@
-# Create a VPC in 10.0.0.0/24 cidr
+# Create a VPC to launch
 resource "aws_vpc" "vpc" {
   cidr_block           = "10.99.0.0/18"
   enable_dns_hostnames = true
@@ -6,19 +6,6 @@ resource "aws_vpc" "vpc" {
 
   tags = {
     Name = "${var.project}-vpc"
-  }
-}
-
-# Create 2 public subnets, each in a different AZ
-resource "aws_subnet" "public-subnets" {
-  count                   = length(var.public_subnets_cidrs)
-  vpc_id                  = aws_vpc.vpc.id
-  cidr_block              = element(var.public_subnets_cidrs, count.index)
-  map_public_ip_on_launch = true
-  availability_zone       = element(var.availability_zones, count.index)
-
-  tags = {
-    Name = "${var.project}-public-subnet-${count.index + 1}"
   }
 }
 
@@ -57,6 +44,19 @@ resource "aws_nat_gateway" "nat_igw" {
 }
 
 ########### PUBLIC SUBNETS ##################
+
+# Create 2 public subnets, each in a different AZ
+resource "aws_subnet" "public-subnets" {
+  count                   = length(var.public_subnets_cidrs)
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = element(var.public_subnets_cidrs, count.index)
+  map_public_ip_on_launch = true
+  availability_zone       = element(var.availability_zones, count.index)
+
+  tags = {
+    Name = "${var.project}-public-subnet-${count.index + 1}"
+  }
+}
 
 # Create a first Route Table to route traffic for Public Subnets
 resource "aws_route_table" "rt_public_subnet" {
@@ -126,3 +126,21 @@ resource "aws_route_table_association" "private_subnet_asso" {
   route_table_id = element(aws_route_table.rt_private_subnet.*.id, count.index)
 }
 
+
+########### ISOLATED SUBNETS ##################
+
+resource "aws_subnet" "database_subnets" {
+  count                   = length(var.db_subnets_cidrs)
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = element(var.db_subnets_cidrs, count.index)
+  map_public_ip_on_launch = false
+  availability_zone       = element(var.availability_zones, count.index)
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
+  tags = {
+    Name = "${var.project}-database-subnet-${count.index + 1}"
+  }
+}

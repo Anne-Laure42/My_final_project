@@ -128,19 +128,8 @@ resource "aws_iam_policy" "firehose_policy" {
         "Resource" : [
           "${aws_s3_bucket.ecs_logs_bucket.arn}",
           "${aws_s3_bucket.ecs_logs_bucket.arn}/*"
-          #  "arn:aws:s3:::firehose-test-bucket1",
-          # "arn:aws:s3:::firehose-test-bucket1/*"
         ]
       },
-      # {
-      #   "Effect": "Allow",
-      #   "Action": [
-      #     "logs:PutLogEvents"
-      #   ],
-      #   "Resource": [
-      #     "arn:aws:logs:eu-west-3:533267122473:log-group:*":log-stream:*
-      #   ]
-      # },
       {
         "Effect" : "Allow",
         "Action" : [
@@ -174,15 +163,15 @@ resource "aws_iam_role_policy_attachment" "firehose_policy_attachment" {
 resource "aws_iam_role" "cloudwatch_logs" {
   name = "cloudwatch_logs_to_firehose"
   assume_role_policy = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Action": "sts:AssumeRole",
-        "Principal": {
-          "Service": "logs.eu-west-3.amazonaws.com"
+        "Action" : "sts:AssumeRole",
+        "Principal" : {
+          "Service" : "logs.eu-west-3.amazonaws.com"
         },
-        "Effect": "Allow",
-        "Sid": "",
+        "Effect" : "Allow",
+        "Sid" : "",
       },
     ],
   })
@@ -192,15 +181,46 @@ resource "aws_iam_role_policy" "cloudwatch_logs" {
   role = aws_iam_role.cloudwatch_logs.name
 
   policy = jsonencode({
-    "Statement": [
+    "Statement" : [
       {
-        "Effect": "Allow",
-        "Action": ["firehose:*"],
-        "Resource": [aws_kinesis_firehose_delivery_stream.firehose_delivery_stream.arn],
+        "Effect" : "Allow",
+        "Action" : ["firehose:*"],
+        "Resource" : [aws_kinesis_firehose_delivery_stream.firehose_delivery_stream.arn],
       },
     ],
   })
 }
 
 
-# --- RDS Role and policy ---
+# # --- SSM Paramater Policy ---
+
+
+# resource "aws_iam_policy" "ecs_task_ssm_policy" {
+#   name        = "${var.project}-ecs-task-ssm-policy"
+#   description = "IAM policy for ECS Task execution"
+
+#   policy = jsonencode({
+#     "Version" : "2012-10-17",
+#     "Statement" : [
+#       {
+#         "Effect" : "Allow",
+#         "Action" : "ssm:DescribeParameters",
+#         "Resource" : "*"
+#       },
+#       {
+#         "Effect" : "Deny",
+#         "Action" : [
+#           "ssm:GetParameter",
+#           "ssm:DeleteParameter",
+#           "ssm:PutParameter"
+#         ],
+#         "Resource" : "*"
+#       }
+#     ]
+#   })
+# }
+
+# resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy_attachment" {
+#   role       = aws_iam_role.ecs_exec_role.name
+#   policy_arn = aws_iam_policy.ecs_task_ssm_policy.arn
+# }

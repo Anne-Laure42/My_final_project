@@ -44,7 +44,7 @@ resource "aws_security_group" "ec2_security_group" {
   description = "ECS Security Group"
   vpc_id      = aws_vpc.vpc.id
 
-   lifecycle {
+  lifecycle {
     create_before_destroy = true
   }
 }
@@ -72,36 +72,37 @@ resource "aws_security_group_rule" "ecs-all-egress" {
 
 
 
-# ------------------------------------------------------------------------------
-# DB Security Group 
-# ------------------------------------------------------------------------------
+# # ------------------------------------------------------------------------------
+# # DB Security Group 
+# # ------------------------------------------------------------------------------
 
-resource "aws_security_group" "db_security_group" {
-  name        = "database-security-group"
-  description = "Database security group"
-  vpc_id      = aws_vpc.vpc.id
+# resource "aws_security_group" "db_security_group" {
+#   name        = "database-security-group"
+#   description = "Database security group"
+#   vpc_id      = aws_vpc.vpc.id
 
 
-lifecycle {
-  create_before_destroy = true
-}
-}
+#   lifecycle {
+#     create_before_destroy = true
+#   }
+# }
 
-resource "aws_security_group_rule" "db-ingress" {
-  security_group_id        = aws_security_group.db_security_group.id
-  type                     = "ingress"
-  from_port                = 3306 
-  to_port                  = 3306
-  protocol                 = "tcp"
-  description       = "Allows traffic from only the ECS Security Group"
-  source_security_group_id = aws_security_group.ecs_sg.id
-}
+# resource "aws_security_group_rule" "db_ingress" {
+#   type                     = "ingress"
+#   from_port                = 3306
+#   to_port                  = 3306
+#   protocol                 = "tcp"
+#   description              = "Allows traffic from only the ECS Security Group"
+#   security_group_id        = aws_security_group.db_security_group.id
+#   source_security_group_id = aws_security_group.ec2_security_group.id
+# }
 
-resource "aws_security_group_rule" "db-egress" {
-  security_group_id = aws_security_group.db-security-group.id
-  type              = "egress"
-  from_port         = 0
-  to_port           = 0
-  protocol          = "-1"
-  cidr_blocks       = ["0.0.0.0/0"]
-}
+# resource "aws_security_group_rule" "db_egress" {
+  
+#   type              = "egress"
+#   from_port         = 0
+#   to_port           = 0
+#   protocol          = "-1"
+#   security_group_id = aws_security_group.db_security_group.id
+#   cidr_blocks       = ["0.0.0.0/0"]
+# }

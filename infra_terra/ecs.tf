@@ -27,9 +27,32 @@ resource "aws_ecs_task_definition" "app" {
   container_definitions = jsonencode([{
     name         = var.ecs_container_name,
     network_mode = "bridge",
-    image        = "${aws_ecr_repository.my-ecr.repository_url}:latest",
+    image        = "${aws_ecr_repository.my_ecr.repository_url}:latest",
     essential    = true,
     portMappings = [{ containerPort = var.app_port, hostPort = 0 }]
+
+    # environment = [
+    #   {
+    #     name  = "DB_HOST"
+    #     value = aws_db_instance.my_rds_database.endpoint
+    #   },
+    #   {
+    #     name  = "DB_PORT"
+    #     value = "3306"
+    #   },
+    #   {
+    #     name  = "DB_USER"
+    #     value = aws_ssm_parameter.db_username.value
+    #   },
+    #   {
+    #     name  = "DB_PASS"
+    #     value = aws_ssm_parameter.db_password.value
+    #   },
+    #   {
+    #       name  = "DB_NAME"
+    #       value =  aws_db_instance.my_rds_database.db_name
+    #   }
+    # ]
 
     logConfiguration = {
       logDriver = "awslogs",
@@ -50,11 +73,6 @@ resource "aws_ecs_service" "app" {
   task_definition = aws_ecs_task_definition.app.arn
   iam_role        = aws_iam_role.ecsServiceRole.arn
   desired_count   = 2
-
-  # network_configuration {
-  #   security_groups = [aws_security_group.asg_security_group.id]
-  #   subnets         = [for subnet in aws_subnet.private-subnets : subnet.id]
-  # }
 
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.ecs_capacity_provider.name

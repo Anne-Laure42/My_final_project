@@ -1,5 +1,5 @@
 
-resource "aws_ecr_repository" "my-ecr" {
+resource "aws_ecr_repository" "my_ecr" {
   name                 = "repo"
   image_tag_mutability = "IMMUTABLE"
 
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "my-ecr" {
 }
 
 resource "aws_ecr_lifecycle_policy" "repositoryPolicy" {
-  repository = aws_ecr_repository.my-ecr.name
+  repository = aws_ecr_repository.my_ecr.name
 
   policy = <<EOF
 {
@@ -35,9 +35,9 @@ EOF
 locals {
 
   docker_login_command = "aws ecr get-login-password --region ${var.aws_region} | docker login --username AWS --password-stdin ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com"
-  docker_build_command = "docker build -f ../docker/Dockerfile -t ${aws_ecr_repository.my-ecr.name} ../docker"
-  docker_tag_command   = "docker tag ${aws_ecr_repository.my-ecr.name}:latest ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.my-ecr.name}:latest"
-  docker_push_command  = "docker push ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.my-ecr.name}:latest"
+  docker_build_command = "docker build -f ../docker/Dockerfile -t ${aws_ecr_repository.my_ecr.name} ../docker"
+  docker_tag_command   = "docker tag ${aws_ecr_repository.my_ecr.name}:latest ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.my_ecr.name}:latest"
+  docker_push_command  = "docker push ${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/${aws_ecr_repository.my_ecr.name}:latest"
 }
 
 # This resource authenticates you to the ECR service
@@ -48,7 +48,7 @@ resource "null_resource" "docker_login" {
   triggers = {
     "run_at" = timestamp()
   }
-  depends_on = [aws_ecr_repository.my-ecr]
+  depends_on = [aws_ecr_repository.my_ecr]
 }
 
 # This resource builds the docker image from the Dockerfile in the app folder

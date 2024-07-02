@@ -14,6 +14,12 @@ variable "availability_zones" {
   default     = ["eu-west-3a", "eu-west-3b"]
 }
 
+variable "multi_az" {
+  description = "Specifies if the RDS instance is multi-AZ"
+  type        = bool
+  default     = true
+}
+
 variable "public_subnets_cidrs" {
   description = "Public Subnets CIDR values"
   type        = list(string)
@@ -75,12 +81,19 @@ variable "alert_email" {
   default     = "annelaure423302101@gmail.com"
 }
 
-variable "db-username" {
-  description = "DB username"
-  sensitive = true
+
+variable "db_name" {
+  description = "DB name"
+  default     = "my-db-sql"
 }
 
-variable "db-password" {
+
+variable "db_username" {
+  description = "DB username"
+  sensitive   = true
+}
+
+variable "db_password" {
   description = "DB password"
-  sensitive = true
+  sensitive   = true
 }
